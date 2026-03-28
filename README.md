@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## AI Interviewer
 
-## Getting Started
+LM Studio에 올린 로컬 LLM을 OpenAI 호환 API로 호출해서, 브라우저에서 바로 모의 인터뷰를 진행할 수 있는 Next.js 앱입니다.
 
-First, run the development server:
+### 주요 기능
+
+- `LM Studio /v1/models`를 통해 로컬 모델 목록 조회
+- `LM Studio /v1/chat/completions`를 통한 인터뷰 턴 생성
+- 역할, 경력, 기술 스택, 집중 영역, 인터뷰 스타일 설정
+- 한 화면에서 질문/답변을 이어가는 인터뷰 콘솔 UI
+
+### 실행 방법
+
+1. LM Studio에서 원하는 모델을 로드합니다.
+2. Developer 탭에서 OpenAI compatible local server를 실행합니다.
+3. 기본 주소가 `http://127.0.0.1:1234/v1`이 아니면 `.env.local`에 아래 값을 넣습니다.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+LM_STUDIO_BASE_URL=http://127.0.0.1:1234/v1
+# 필요할 때만
+LM_STUDIO_API_KEY=lm-studio
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. 앱을 실행합니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+5. 브라우저에서 [http://localhost:3000](http://localhost:3000) 을 엽니다.
 
-## Learn More
+### 인터뷰 흐름
 
-To learn more about Next.js, take a look at the following resources:
+1. 오른쪽 패널에서 로컬 모델을 선택합니다.
+2. 인터뷰 역할, 경력, 스택, 집중 영역을 조정합니다.
+3. `인터뷰 시작`을 누르면 첫 질문이 생성됩니다.
+4. 답변을 입력하면 다음 꼬리질문이 이어집니다.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 스크립트
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm dev
+pnpm lint
+pnpm build
+```
