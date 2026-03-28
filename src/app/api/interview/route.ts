@@ -1,10 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import {
   buildInterviewSystemPrompt,
   buildKickoffPrompt,
   type InterviewConfig,
   type InterviewMessage,
 } from "@/lib/interview";
+import {
+  getUserFromSessionToken,
+  hasRoleAccess,
+  SESSION_COOKIE_NAME,
+} from "@/lib/server/auth";
 import { createLocalChatCompletion } from "@/lib/lmstudio";
 
 type InterviewRequestBody = {
@@ -35,8 +40,24 @@ function isValidTranscript(transcript: InterviewMessage[] | undefined) {
   );
 }
 
-export async function POST(request: Request) {
+export const runtime = "nodejs";
+
+export async function POST(request: NextRequest) {
   try {
+    const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
+    const user = await getUserFromSessionToken(token);
+
+    if (!user) {
+      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+    }
+
+    if (!hasRoleAccess(user.role, ["admin", "interviewee"])) {
+      return NextResponse.json(
+        { error: "인터뷰 실행 권한이 없는 계정입니다." },
+        { status: 403 },
+      );
+    }
+
     const body = (await request.json()) as InterviewRequestBody;
 
     if (!body.model?.trim()) {

@@ -1,46 +1,72 @@
 ## AI Interviewer
 
-LM Studio에 올린 로컬 LLM을 OpenAI 호환 API로 호출해서, 브라우저에서 바로 모의 인터뷰를 진행할 수 있는 Next.js 앱입니다.
+LM Studio 기반 모의 인터뷰 앱에 역할 기반 로그인(`admin`, `interviewer`, `interviewee`)을 추가한 Next.js 프로젝트입니다.
 
-### 주요 기능
+### 모드 및 권한
 
-- `LM Studio /v1/models`를 통해 로컬 모델 목록 조회
-- `LM Studio /v1/chat/completions`를 통한 인터뷰 턴 생성
-- 역할, 경력, 기술 스택, 집중 영역, 인터뷰 스타일 설정
-- 한 화면에서 질문/답변을 이어가는 인터뷰 콘솔 UI
+- `admin`: 인터뷰 템플릿/프롬프트 관리 화면 접근
+- `interviewer`: AI 인터뷰 결과 리뷰 화면 접근
+- `interviewee`: 실제 인터뷰 진행 화면 접근
 
-### 실행 방법
+권한이 없는 화면/API에 접근하면 차단됩니다.
 
-1. LM Studio에서 원하는 모델을 로드합니다.
-2. Developer 탭에서 OpenAI compatible local server를 실행합니다.
-3. 기본 주소가 `http://127.0.0.1:1234/v1`이 아니면 `.env.local`에 아래 값을 넣습니다.
+### 구성 요소
+
+- Next.js App Router
+- PostgreSQL: 사용자/세션/인터뷰 데이터 저장
+- Redis: 세션 캐시
+- LM Studio OpenAI 호환 API 연동
+
+### 빠른 시작
+
+1. 환경 파일을 준비합니다.
 
 ```bash
-LM_STUDIO_BASE_URL=http://127.0.0.1:1234/v1
-# 필요할 때만
-LM_STUDIO_API_KEY=lm-studio
+cp .env.example .env.local
+```
+
+2. DB/캐시 컨테이너를 실행합니다.
+
+```bash
+pnpm db:up
+```
+
+3. 의존성을 설치하고 계정을 시드합니다.
+
+```bash
+pnpm install
+pnpm seed:auth
 ```
 
 4. 앱을 실행합니다.
 
 ```bash
-pnpm install
 pnpm dev
 ```
 
-5. 브라우저에서 [http://localhost:3000](http://localhost:3000) 을 엽니다.
+5. 브라우저에서 [http://localhost:3000](http://localhost:3000) 접속 후 로그인합니다.
 
-### 인터뷰 흐름
+### 기본 시드 계정
 
-1. 오른쪽 패널에서 로컬 모델을 선택합니다.
-2. 인터뷰 역할, 경력, 스택, 집중 영역을 조정합니다.
-3. `인터뷰 시작`을 누르면 첫 질문이 생성됩니다.
-4. 답변을 입력하면 다음 꼬리질문이 이어집니다.
+- `admin@ai-interviewer.local` / `admin1234!`
+- `interviewer@ai-interviewer.local` / `interviewer1234!`
+- `interviewee@ai-interviewer.local` / `interviewee1234!`
 
-### 스크립트
+필요하면 `.env.local`의 `SEED_*` 값으로 변경 가능합니다.
+
+### LM Studio 설정
+
+1. LM Studio에서 원하는 모델을 로드합니다.
+2. Developer 탭에서 OpenAI compatible local server를 실행합니다.
+3. 기본 주소가 다르면 `.env.local`에서 `LM_STUDIO_BASE_URL`을 수정합니다.
+
+### 주요 스크립트
 
 ```bash
 pnpm dev
 pnpm lint
 pnpm build
+pnpm db:up
+pnpm db:down
+pnpm seed:auth
 ```
