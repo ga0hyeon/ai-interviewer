@@ -5,7 +5,9 @@ import { Pool } from "pg";
 const databaseUrl = process.env.DATABASE_URL;
 
 if (!databaseUrl) {
-  throw new Error("DATABASE_URL is required to seed users.");
+  throw new Error(
+    "DATABASE_URL is required to seed users. Copy .env.example to .env.local first.",
+  );
 }
 
 function hashPassword(password) {

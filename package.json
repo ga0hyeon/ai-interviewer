@@ -9,7 +9,7 @@
     "lint": "eslint",
     "db:up": "docker compose up -d postgres redis",
     "db:down": "docker compose down",
-    "seed:auth": "node scripts/seed-auth.mjs"
+    "seed:auth": "node --env-file-if-exists=.env.local --env-file-if-exists=.env scripts/seed-auth.mjs"
   },
   "dependencies": {
     "next": "16.2.1",
